@@ -11,7 +11,8 @@ export default function App() {
           <Title>Doppelkopf</Title>
           <nav data-topnav>
             <div class="flex items-center w-100">
-              <a href="/">
+              <a href="/" class="flex items-center">
+                <img src="/icon.png" alt="icon" width="30px" />
                 <b>Doppelkopf</b>
               </a>
             </div>
