@@ -20,10 +20,17 @@ const getGames = query(async (session: number) => {
     .where(eq(sessionPlayersTable.session, session))
     .orderBy(sessionPlayersTable.id);
 
-  const playerPoints = new Map<number, { name: string; points: number[] }>();
+  const playerPoints = new Map<
+    number,
+    { name: string; points: number[]; pointsNoRam: number }
+  >();
 
   for (const player of order) {
-    playerPoints.set(player.id, { name: player.name, points: [0] });
+    playerPoints.set(player.id, {
+      name: player.name,
+      points: [0],
+      pointsNoRam: 0,
+    });
   }
 
   let dealerI = 0;
@@ -57,7 +64,6 @@ const getGames = query(async (session: number) => {
       .where(eq(gamePlayersTable.game, game.id));
 
     const mult = 2 ** (rams.length || 0);
-    const points = game.points * mult;
 
     const winners = players.filter((p) => p.winner).map((p) => p.id);
     const losers = players.filter((p) => !p.winner).map((p) => p.id);
@@ -66,16 +72,24 @@ const getGames = query(async (session: number) => {
       .filter((p) => !(winners.includes(p) || losers.includes(p)));
 
     for (const winner of winners) {
+      let points = game.points;
+
+      if (winners.length === 1) points *= 3;
+
       const player = playerPoints.get(winner)!;
-      player.points.push(
-        player.points.at(-1)! + (points * losers.length) / winners.length,
-      );
+      player.points.push(player.points.at(-1)! + points * mult);
+      player.pointsNoRam += points;
       playerPoints.set(winner, player);
     }
 
     for (const loser of losers) {
+      let points = game.points;
+
+      if (losers.length === 1) points *= 3;
+
       const player = playerPoints.get(loser)!;
-      player.points.push(player.points.at(-1)! - points);
+      player.points.push(player.points.at(-1)! - points * mult);
+      player.pointsNoRam -= points;
       playerPoints.set(loser, player);
     }
 
@@ -236,15 +250,17 @@ export default function Session() {
                   <th>Rank</th>
                   <th>Name</th>
                   <th>Points</th>
+                  <th>Points (No Ram)</th>
                 </tr>
               </thead>
               <tbody>
                 <For each={games()?.players}>
-                  {({ name, points }, i) => (
+                  {(player, i) => (
                     <tr>
                       <td>{i() + 1}</td>
-                      <td>{name}</td>
-                      <td>{points.at(-1)}</td>
+                      <td>{player.name}</td>
+                      <td>{player.points.at(-1)}</td>
+                      <td>{player.pointsNoRam}</td>
                     </tr>
                   )}
                 </For>
@@ -366,7 +382,13 @@ export default function Session() {
             } else {
               const losers = games()!
                 .order.map((p) => p.id)
-                .filter((p) => !(p === dealer().id || winners().includes(p)));
+                .filter(
+                  (p) =>
+                    !(
+                      (games()?.order.length === 5 && p === dealer().id) ||
+                      winners().includes(p)
+                    ),
+                );
 
               await createGame(
                 session,
@@ -423,7 +445,12 @@ export default function Session() {
             <fieldset class="vstack">
               <legend>Winners</legend>
               <menu class="buttons">
-                <For each={games()?.order.filter((p) => p.id !== dealer().id)}>
+                <For
+                  each={games()?.order.filter(
+                    (p) =>
+                      !(games()?.order.length === 5 && p.id === dealer().id),
+                  )}
+                >
                   {(player) => (
                     <button
                       type="button"

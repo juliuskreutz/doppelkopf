@@ -10,7 +10,7 @@ import {
   sessionPlayersTable,
 } from "~/db/schema";
 
-async function queryPlayerData() {
+async function getPlayerData() {
   "use server";
 
   const players = new Map<
@@ -18,6 +18,7 @@ async function queryPlayerData() {
     {
       name: string;
       points: number[];
+      pointsNoRam: number;
       games: number;
       wins: number;
       solosWon: number;
@@ -29,6 +30,7 @@ async function queryPlayerData() {
     players.set(player.id, {
       name: player.name,
       points: [0],
+      pointsNoRam: 0,
       games: 0,
       wins: 0,
       solosWon: 0,
@@ -71,19 +73,21 @@ async function queryPlayerData() {
       .where(eq(gamePlayersTable.game, game.id));
 
     const mult = 2 ** (sessionRams.get(game.session)?.length || 0);
-    const points = game.points * mult;
 
     const winners = gamePlayers.filter((p) => p.winner).map((p) => p.player);
     const losers = gamePlayers.filter((p) => !p.winner).map((p) => p.player);
-    const skips = gameSessionPlayers.filter(
-      (p) => !(winners.includes(p) || losers.includes(p)),
-    );
+    const skips = players
+      .keys()
+      .filter((p) => !(winners.includes(p) || losers.includes(p)));
 
     for (const winner of winners) {
+      let points = game.points;
+
+      if (winners.length === 1) points *= 3;
+
       const player = players.get(winner)!;
-      player.points.push(
-        player.points.at(-1)! + (points * losers.length) / winners.length,
-      );
+      player.points.push(player.points.at(-1)! + points * mult);
+      player.pointsNoRam += points;
       player.wins += 1;
       player.games += 1;
 
@@ -95,8 +99,13 @@ async function queryPlayerData() {
     }
 
     for (const loser of losers) {
+      let points = game.points;
+
+      if (losers.length === 1) points *= 3;
+
       const player = players.get(loser)!;
-      player.points.push(player.points.at(-1)! - points);
+      player.points.push(player.points.at(-1)! - points * mult);
+      player.pointsNoRam -= points;
       player.games += 1;
 
       if (losers.length === 1) {
@@ -129,7 +138,7 @@ async function queryPlayerData() {
 }
 
 export default function Home() {
-  const playerData = createAsync(queryPlayerData);
+  const playerData = createAsync(getPlayerData);
 
   let canvas: HTMLCanvasElement | undefined;
 
@@ -163,15 +172,17 @@ export default function Home() {
                   <th>Rank</th>
                   <th>Name</th>
                   <th>Points</th>
+                  <th>Points (No Ram)</th>
                 </tr>
               </thead>
               <tbody>
                 <For each={playerData()}>
-                  {({ name, points }, i) => (
+                  {(player, i) => (
                     <tr>
                       <td>{i() + 1}</td>
-                      <td>{name}</td>
-                      <td>{points.at(-1)}</td>
+                      <td>{player.name}</td>
+                      <td>{player.points.at(-1)}</td>
+                      <td>{player.pointsNoRam}</td>
                     </tr>
                   )}
                 </For>
@@ -184,38 +195,34 @@ export default function Home() {
           </div>
         </div>
 
-        <div>
-          <h1>Stats</h1>
-          <div class="table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Games</th>
-                  <th>Wins</th>
-                  <th>Win Rate</th>
-                  <th>Solos Won</th>
-                  <th>Solos Lost</th>
-                </tr>
-              </thead>
-              <tbody>
-                <For each={playerData()}>
-                  {(player) => (
-                    <tr>
-                      <td>{player.name}</td>
-                      <td>{player.games}</td>
-                      <td>{player.wins}</td>
-                      <td>
-                        {((player.wins * 100) / player.games).toFixed(1)}%
-                      </td>
-                      <td>{player.solosWon}</td>
-                      <td>{player.solosLost}</td>
-                    </tr>
-                  )}
-                </For>
-              </tbody>
-            </table>
-          </div>
+        <h1>Stats</h1>
+        <div class="table">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Games</th>
+                <th>Wins</th>
+                <th>Win Rate</th>
+                <th>Solos Won</th>
+                <th>Solos Lost</th>
+              </tr>
+            </thead>
+            <tbody>
+              <For each={playerData()}>
+                {(player) => (
+                  <tr>
+                    <td>{player.name}</td>
+                    <td>{player.games}</td>
+                    <td>{player.wins}</td>
+                    <td>{((player.wins * 100) / player.games).toFixed(1)}%</td>
+                    <td>{player.solosWon}</td>
+                    <td>{player.solosLost}</td>
+                  </tr>
+                )}
+              </For>
+            </tbody>
+          </table>
         </div>
       </div>
     </main>
