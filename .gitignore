@@ -1,0 +1,9 @@
+.devenv
+.direnv
+.nitro
+.output
+.solid-start
+node_modules
+result
+.envrc
+db.sqlite
