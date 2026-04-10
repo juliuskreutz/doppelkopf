@@ -59,28 +59,36 @@
           options.services.doppelkopf = {
             enable = lib.mkEnableOption "doppelkopf";
 
-            databaseUrl = lib.mkOption {
-              type = lib.types.str;
-            };
-
-            port = lib.mkOption {
-              type = lib.types.int;
-              default = 3000;
+            instances = lib.mkOption {
+              type = lib.types.listOf (
+                lib.types.submodule {
+                  options = {
+                    name = lib.mkOption { type = lib.types.str; };
+                    databaseUrl = lib.mkOption { type = lib.types.str; };
+                    port = lib.mkOption { type = lib.types.int; };
+                  };
+                }
+              );
             };
           };
 
           config = lib.mkIf cfg.enable {
-            systemd.services.doppelkopf = {
-              wantedBy = [ "multi-user.target" ];
-              environment = {
-                DATABASE_URL = cfg.databaseUrl;
-                PORT = toString cfg.port;
-              };
-              serviceConfig = {
-                Restart = "always";
-                ExecStart = "${doppelkopf}/bin/doppelkopf";
-              };
-            };
+            config.systemd.services = lib.listToAttrs (
+              map (instance: {
+                name = "doppelkopf-${instance.name}";
+                value = {
+                  wantedBy = [ "multi-user.target" ];
+                  environment = {
+                    DATABASE_URL = instance.databaseUrl;
+                    PORT = toString instance.port;
+                  };
+                  serviceConfig = {
+                    Restart = "always";
+                    ExecStart = "${doppelkopf}/bin/doppelkopf";
+                  };
+                };
+              }) cfg.instances
+            );
           };
         };
     };
