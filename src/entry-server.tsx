@@ -16,6 +16,15 @@ export default createHandler(() => (
           />
           <script src="https://unpkg.com/@knadh/oat/oat.min.js" defer></script>
 
+          <script>
+            {`(() => {
+              var theme = localStorage.getItem("theme");
+              if (theme) {
+                document.documentElement.style.colorScheme = theme;
+              }
+            })()`}
+          </script>
+
           {assets}
         </head>
         <body>

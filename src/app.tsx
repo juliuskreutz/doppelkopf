@@ -2,6 +2,7 @@ import { MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
+import Nav from "./components/Nav";
 
 export default function App() {
   return (
@@ -9,19 +10,7 @@ export default function App() {
       root={(props) => (
         <MetaProvider>
           <Title>Doppelkopf</Title>
-          <nav data-topnav>
-            <div class="flex items-center w-100">
-              <a href="/" class="flex items-center">
-                <img src="/icon.png" alt="icon" width="30px" />
-                <b>Doppelkopf</b>
-              </a>
-            </div>
-            <div>
-              <a href="/sessions" type="button">
-                Sessions
-              </a>
-            </div>
-          </nav>
+          <Nav />
           <Suspense>{props.children}</Suspense>
         </MetaProvider>
       )}
