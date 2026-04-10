@@ -73,7 +73,7 @@
           };
 
           config = lib.mkIf cfg.enable {
-            config.systemd.services = lib.listToAttrs (
+            systemd.services = lib.listToAttrs (
               map (instance: {
                 name = "doppelkopf-${instance.name}";
                 value = {
