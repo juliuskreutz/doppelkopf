@@ -400,7 +400,7 @@ export default function Session() {
               );
             }
 
-            await revalidate("games");
+            await revalidate(getGames.key);
           }}
         >
           <header>
@@ -527,7 +527,7 @@ export default function Session() {
           method="dialog"
           onsubmit={async () => {
             await deleteGame(game());
-            await revalidate("games");
+            await revalidate(getGames.key);
           }}
         >
           <header>
