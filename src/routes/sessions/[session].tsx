@@ -2,6 +2,7 @@ import { createAsync, query, revalidate, useParams } from "@solidjs/router";
 import { Chart } from "chart.js/auto";
 import { eq } from "drizzle-orm";
 import { createEffect, createSignal, For, Show } from "solid-js";
+import colors from "~/colors";
 import { db } from "~/db";
 import {
   gamePlayersTable,
@@ -119,8 +120,9 @@ const getGames = query(async (session: number) => {
 
   const players = playerPoints.values().toArray();
   players.sort((a, b) => b.points.at(-1)! - a.points.at(-1)!);
+  const mult = 2 ** (rams.length || 0);
 
-  return { order, games, players, dealer };
+  return { order, games, players, dealer, mult };
 }, "games");
 
 async function createGame(
@@ -196,7 +198,12 @@ export default function Session() {
     const data = {
       labels: [...Array(length).keys()],
       datasets: g.players.map((p) => {
-        return { label: p.name, data: p.points };
+        return {
+          label: p.name,
+          data: p.points,
+          borderColor: colors.get(p.name)!.border,
+          backgroundColor: colors.get(p.name)!.background,
+        };
       }),
     };
 
@@ -297,7 +304,8 @@ export default function Session() {
           </div>
         </div>
 
-        <h1>Games (Dealer: {games()?.dealer.name})</h1>
+        <h2>Dealer: {games()?.dealer.name}</h2>
+        <h2 class="hstack">Mult: {getMultBadge(games()?.mult || 1)}</h2>
         <div class="table">
           <table>
             <thead>

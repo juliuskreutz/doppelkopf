@@ -1,0 +1,3 @@
+[style*="color-scheme: dark"] canvas {
+  filter: invert(1) hue-rotate(180deg);
+}

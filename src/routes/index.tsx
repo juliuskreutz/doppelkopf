@@ -2,6 +2,7 @@ import { createAsync } from "@solidjs/router";
 import { Chart } from "chart.js/auto";
 import { eq } from "drizzle-orm";
 import { For, onMount } from "solid-js";
+import colors from "~/colors";
 import { db } from "~/db";
 import {
   gamePlayersTable,
@@ -153,6 +154,8 @@ export default function Home() {
         return {
           label: p.name,
           data: p.points,
+          borderColor: colors.get(p.name)!.border,
+          backgroundColor: colors.get(p.name)!.background,
         };
       }),
     };
