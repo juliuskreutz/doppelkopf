@@ -214,17 +214,33 @@ export default function Session() {
       case "solo":
         return <span class="badge">Solo</span>;
       case "silent":
-        return <span class="badge secondary">Silent</span>;
+        return (
+          <span class="badge" data-variant="secondary">
+            Silent
+          </span>
+        );
     }
   }
 
   function getMultBadge(mult: number) {
     if (mult >= 8) {
-      return <span class="badge danger">{mult}x</span>;
+      return (
+        <span class="badge" data-variant="danger">
+          {mult}x
+        </span>
+      );
     } else if (mult === 4) {
-      return <span class="badge warning">4x</span>;
+      return (
+        <span class="badge" data-variant="warning">
+          4x
+        </span>
+      );
     } else if (mult === 2) {
-      return <span class="badge success">2x</span>;
+      return (
+        <span class="badge" data-variant="success">
+          2x
+        </span>
+      );
     } else {
       return <span class="badge outline">1x</span>;
     }
@@ -232,9 +248,17 @@ export default function Session() {
 
   function getRamBadge(ram: boolean) {
     if (ram) {
-      return <span class="badge success">✔</span>;
+      return (
+        <span class="badge" data-variant="success">
+          ✔
+        </span>
+      );
     } else {
-      return <span class="badge danger">✘</span>;
+      return (
+        <span class="badge" data-variant="danger">
+          ✘
+        </span>
+      );
     }
   }
 
