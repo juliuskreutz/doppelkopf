@@ -24,11 +24,23 @@ colors.set("Daan", {
   border: BORDER_COLORS[0],
   background: BACKGROUND_COLORS[0],
 });
+colors.set("Alex", {
+  border: BORDER_COLORS[0],
+  background: BACKGROUND_COLORS[0],
+});
 colors.set("Gerome", {
   border: BORDER_COLORS[2],
   background: BACKGROUND_COLORS[2],
 });
+colors.set("Yevgeniy", {
+  border: BORDER_COLORS[2],
+  background: BACKGROUND_COLORS[2],
+});
 colors.set("Jana", {
+  border: BORDER_COLORS[1],
+  background: BACKGROUND_COLORS[1],
+});
+colors.set("Althoetmar", {
   border: BORDER_COLORS[1],
   background: BACKGROUND_COLORS[1],
 });
