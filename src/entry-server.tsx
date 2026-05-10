@@ -16,7 +16,7 @@ export default createHandler(() => (
           />
           <script src="https://unpkg.com/@knadh/oat/oat.min.js" defer></script>
 
-          <script src="./index.ts"></script>
+          <script src="./index.js"></script>
 
           {assets}
         </head>
