@@ -1,7 +1,6 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    devenv.url = "github:cachix/devenv";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -13,30 +12,6 @@
         pkgs = inputs.nixpkgs.legacyPackages.${system};
       in
       {
-        devShells.default = inputs.devenv.lib.mkShell {
-          inherit inputs pkgs;
-
-          modules = [
-            (
-              { pkgs, ... }:
-              {
-                languages.javascript = {
-                  enable = true;
-                  pnpm = {
-                    enable = true;
-                    install.enable = true;
-                  };
-                };
-
-                packages = with pkgs; [
-                  biome
-                  sqlite
-                ];
-              }
-            )
-          ];
-        };
-
         packages = rec {
           default = pkgs.callPackage ./package.nix { };
           doppelkopf = default;
