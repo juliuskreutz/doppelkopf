@@ -311,12 +311,12 @@ export default function Session() {
             <thead>
               <tr>
                 <th>Id</th>
-                <th>Dealer</th>
                 <th>Type</th>
                 <th>Points</th>
                 <th>Mult</th>
                 <th>Winners</th>
                 <th>Losers</th>
+                <th>Dealer</th>
                 <th>Ram</th>
                 <th>Actions</th>
               </tr>
@@ -326,7 +326,6 @@ export default function Session() {
                 {(game, i) => (
                   <tr>
                     <td>{i() + 1}</td>
-                    <td>{game.dealer.name}</td>
                     <td>{getTypeBadge(game.type)}</td>
                     <td>{game.points}</td>
                     <td>{getMultBadge(game.mult)}</td>
@@ -342,6 +341,7 @@ export default function Session() {
                         .map((p) => p.name)
                         .join(", ")}
                     </td>
+                    <td>{game.dealer.name}</td>
                     <td>{getRamBadge(game.ram)}</td>
                     <td>
                       <menu class="buttons">

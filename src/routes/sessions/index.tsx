@@ -203,9 +203,7 @@ export default function Sessions() {
           <header>
             <h3>Delete Session {session()}</h3>
           </header>
-          <p>
-            This will delete all of the games connected played in this session!
-          </p>
+          <p>This will delete all of the games played in this session!</p>
           <footer>
             <button
               type="button"
