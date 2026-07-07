@@ -52,7 +52,7 @@ map.set("Martin", {
 function enabled() {
   "use server";
 
-  return process.env.COLORS === "TRUE";
+  return process.env.COLORS === "true";
 }
 
 export default { map, enabled };
