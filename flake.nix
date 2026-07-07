@@ -41,6 +41,10 @@
                     name = lib.mkOption { type = lib.types.str; };
                     databaseUrl = lib.mkOption { type = lib.types.str; };
                     port = lib.mkOption { type = lib.types.int; };
+                    colors = lib.mkOption {
+                      type = lib.types.bool;
+                      default = false;
+                    };
                   };
                 }
               );
@@ -56,6 +60,7 @@
                   environment = {
                     DATABASE_URL = instance.databaseUrl;
                     PORT = toString instance.port;
+                    COLORS = toString instance.colors;
                   };
                   serviceConfig = {
                     Restart = "always";
