@@ -198,12 +198,12 @@ export default function Session() {
     const data = {
       labels: [...Array(length).keys()],
       datasets: g.players.map((p) => {
-        if (colors.enabled()) {
+        if (import.meta.env.VITE_COLORS === "true") {
           return {
             label: p.name,
             data: p.points,
-            borderColor: colors.map.get(p.name)!.border,
-            backgroundColor: colors.map.get(p.name)!.background,
+            borderColor: colors.get(p.name)!.border,
+            backgroundColor: colors.get(p.name)!.background,
           };
         } else {
           return {

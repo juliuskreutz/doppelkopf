@@ -60,7 +60,7 @@
                   environment = {
                     DATABASE_URL = instance.databaseUrl;
                     PORT = toString instance.port;
-                    COLORS = toString instance.colors;
+                    VITE_COLORS = toString instance.colors;
                   };
                   serviceConfig = {
                     Restart = "always";
