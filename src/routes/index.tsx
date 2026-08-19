@@ -151,7 +151,7 @@ export default function Home() {
     const data = {
       labels: [...Array(length).keys()],
       datasets: pd.map((p) => {
-        if (import.meta.env.VITE_COLORS === "true") {
+        if (import.meta.env.VITE_COLORS === "1") {
           return {
             label: p.name,
             data: p.points,
@@ -167,7 +167,11 @@ export default function Home() {
       }),
     };
 
-    new Chart(canvas!, { type: "line", data });
+    new Chart(canvas!, {
+      type: "line",
+      data,
+      options: { elements: { point: { radius: 0 } } },
+    });
   });
 
   return (
