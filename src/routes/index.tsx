@@ -143,20 +143,21 @@ export default function Home() {
 
   let canvas: HTMLCanvasElement | undefined;
 
-  onMount(() => {
+  onMount(async () => {
     const pd = playerData()!;
 
     const length = pd[0]?.points.length || 0;
+    const enabled = await colors.enabled();
 
     const data = {
       labels: [...Array(length).keys()],
       datasets: pd.map((p) => {
-        if (import.meta.env.VITE_COLORS === "1") {
+        if (enabled) {
           return {
             label: p.name,
             data: p.points,
-            borderColor: colors.get(p.name)!.border,
-            backgroundColor: colors.get(p.name)!.background,
+            borderColor: colors.map.get(p.name)!.border,
+            backgroundColor: colors.map.get(p.name)!.background,
           };
         } else {
           return {

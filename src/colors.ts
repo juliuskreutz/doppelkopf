@@ -15,38 +15,44 @@ const BACKGROUND_COLORS = BORDER_COLORS.map((color) =>
   color.replace("rgb(", "rgba(").replace(")", ", 0.5)"),
 );
 
-const colors = new Map<string, Color>();
-colors.set("Julius", {
+const map = new Map<string, Color>();
+map.set("Julius", {
   border: BORDER_COLORS[4],
   background: BACKGROUND_COLORS[4],
 });
-colors.set("Daan", {
+map.set("Daan", {
   border: BORDER_COLORS[0],
   background: BACKGROUND_COLORS[0],
 });
-colors.set("Alex", {
+map.set("Alex", {
   border: BORDER_COLORS[0],
   background: BACKGROUND_COLORS[0],
 });
-colors.set("Gerome", {
+map.set("Gerome", {
   border: BORDER_COLORS[2],
   background: BACKGROUND_COLORS[2],
 });
-colors.set("Yevgeniy", {
+map.set("Yevgeniy", {
   border: BORDER_COLORS[2],
   background: BACKGROUND_COLORS[2],
 });
-colors.set("Jana", {
+map.set("Jana", {
   border: BORDER_COLORS[1],
   background: BACKGROUND_COLORS[1],
 });
-colors.set("Althoetmar", {
+map.set("Althoetmar", {
   border: BORDER_COLORS[1],
   background: BACKGROUND_COLORS[1],
 });
-colors.set("Martin", {
+map.set("Martin", {
   border: BORDER_COLORS[3],
   background: BACKGROUND_COLORS[3],
 });
 
-export default colors;
+async function enabled() {
+  "use server";
+
+  return process.env.COLORS === "1";
+}
+
+export default { map, enabled };

@@ -186,7 +186,7 @@ export default function Session() {
   let canvas: HTMLCanvasElement | undefined;
   let chart: Chart | undefined;
 
-  createEffect(() => {
+  createEffect(async () => {
     const g = games();
 
     if (!g || !canvas) {
@@ -194,16 +194,17 @@ export default function Session() {
     }
 
     const length = g.players[0]?.points.length || 0;
+    const enabled = await colors.enabled();
 
     const data = {
       labels: [...Array(length).keys()],
       datasets: g.players.map((p) => {
-        if (import.meta.env.VITE_COLORS === "true") {
+        if (enabled) {
           return {
             label: p.name,
             data: p.points,
-            borderColor: colors.get(p.name)!.border,
-            backgroundColor: colors.get(p.name)!.background,
+            borderColor: colors.map.get(p.name)!.border,
+            backgroundColor: colors.map.get(p.name)!.background,
           };
         } else {
           return {
