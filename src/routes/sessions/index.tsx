@@ -26,6 +26,8 @@ const getSessions = query(async () => {
     });
   }
 
+  sessions.reverse();
+
   return sessions;
 }, "sessions");
 
@@ -71,6 +73,17 @@ export default function Sessions() {
     <main>
       <div class="container">
         <h1>Sessions</h1>
+
+        <button
+          type="button"
+          class="outline w-100"
+          commandfor="create-dialog"
+          command="show-modal"
+          onclick={() => setOrder([])}
+        >
+          +
+        </button>
+
         <div>
           <div class="table">
             <table>
@@ -118,16 +131,6 @@ export default function Sessions() {
             </table>
           </div>
         </div>
-
-        <button
-          type="button"
-          class="outline w-100"
-          commandfor="create-dialog"
-          command="show-modal"
-          onclick={() => setOrder([])}
-        >
-          +
-        </button>
       </div>
 
       <dialog id="create-dialog">
